@@ -2,15 +2,12 @@
 package com.example.android.weatherapp.app;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-
 import android.support.v7.app.ActionBarActivity;
-
 import android.view.Menu;
 import android.view.MenuItem;
-
-import java.lang.annotation.Target;
 
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -20,6 +17,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new ForecastFragment())
@@ -44,11 +42,12 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 
 

@@ -15,10 +15,14 @@
  */
 package com.example.android.weatherapp.app;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,18 +47,30 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
+
 
 /**
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  */
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class ForecastFragment extends Fragment {
 public ArrayAdapter<String> forecastAdapter;
     public ForecastFragment() {
     }
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        updateWeather();
+    }
+    public void updateWeather(){
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.key), getString(R.string.defaulter));
+        weatherTask.execute(location);
 
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,10 +90,14 @@ public ArrayAdapter<String> forecastAdapter;
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute("94043");
+            updateWeather();
             return true;
         }
+       /* else if (id == R.id.action_settings)
+        {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }*/
         return super.onOptionsItemSelected(item);
     }
 
@@ -86,16 +106,7 @@ public ArrayAdapter<String> forecastAdapter;
                              Bundle savedInstanceState) {
 
         // Create some dummy data for the ListView.  Here's a sample weekly forecast
-        String[] data = {
-                "Mon 6/23 - Sunny - 31/17",
-                "Tue 6/24 - Foggy - 21/8",
-                "Wed 6/25 - Cloudy - 22/17",
-                "Thurs 6/26 - Rainy - 18/11",
-                "Fri 6/27 - Foggy - 21/10",
-                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
-                "Sun 6/29 - Sunny - 20/7"
-        };
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(data));
+
 
         // Now that we have some dummy forecast data, create an ArrayAdapter.
         // The ArrayAdapter will take data from a source (like our dummy forecast) and
@@ -105,7 +116,7 @@ public ArrayAdapter<String> forecastAdapter;
                         getActivity(), // The current context (this activity)
                         R.layout.list_item_forecast, // The name of the layout ID.
                         R.id.list_item_forecast_textview, // The ID of the textview to populate.
-                        weekForecast);
+                        new ArrayList<String>());
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
