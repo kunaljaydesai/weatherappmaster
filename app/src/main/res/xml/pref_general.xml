@@ -5,11 +5,19 @@
 
     <EditTextPreference
         android:title ="Location"
-        android:key = "@string/key"
-        android:defaultValue="@string/defaulter"
+        android:key = "@string/pref_location_key"
+        android:defaultValue="@string/pref_location_default"
         android:inputType="text"
         android:singleLine="true"
         ></EditTextPreference>
+    <ListPreference
+        android:title="Metric Selector"
+
+        android:key="@string/pref_units_key"
+        android:entries="@array/pref_units_options"
+        android:defaultValue="@string/pref_units_metric"
+        android:entryValues="@array/pref_units_values"
+         />
 
 
 </PreferenceScreen>
